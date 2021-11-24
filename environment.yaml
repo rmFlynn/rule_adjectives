@@ -1,0 +1,14 @@
+name: rule_adjectives
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.10
+  - pandas
+  - numpy
+  - click
+  - graphviz
+  - python-graphviz
+  - pytest
+  - networkx
+  - pip
