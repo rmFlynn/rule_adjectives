@@ -66,7 +66,7 @@ class Annotations():
         print("generating IDs by index, this may take some time")
         data = self.data.copy()
         data.set_index(['fasta', data.index], inplace=True)
-        annot_ids = self.data['by_index'].apply(
+        annot_ids = self.data.apply(
             lambda x: get_ids_from_annotation(pd.DataFrame(x).T),
             axis=1
         )

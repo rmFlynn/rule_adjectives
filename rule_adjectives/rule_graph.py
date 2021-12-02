@@ -123,7 +123,8 @@ class RuleParser():
         else:
             keep_adj = set(adjectives)
             if not keep_adj.issubset(adj_names):
-                raise ValueError(f"No such adjectives {adjectives - adj_names}")
+                raise ValueError(
+                    f"No such adjectives {adjectives - adj_names}")
         self.root_nodes = set(
             self.data[
                 self.data['name'].apply(lambda x: x in keep_adj)
@@ -226,22 +227,35 @@ class RuleParser():
             if self.G[node].get('type') != 'steps' or True:
                 self.add_to_dot(i)
 
+    def plot_rule(self, output_folder, adjectives:list=None,
+                  show_steps=False):
+        self.dot = graphviz.Digraph(strict=True)
+        self.show_steps = show_steps
+        if adjectives is None:
+            adjectives = self.root_nodes
+        for i in adjectives:
+            self.add_to_dot(i)
+        self.dot.render(os.path.join(output_folder, "All"), view=False)
+
 
     def add_to_dot_genome(self, node, genome, parent=None):
-        # self.dot.node(node, self.G[node].get('display'))
-        if self.G.nodes[node].get('type') == 'steps':
-            count = sum(self.G.nodes[node]['genomes'][genome])
-            self.dot.node(node,
-                          f"{self.G.nodes[node]['display']} {count}",
-                          color="grey")
-            self.dot.edge(parent, node, color="grey")
-            return
-        if self.G.nodes[node].get('type') == 'inGenomeCount':
-            return
-        if self.G.nodes[node]['genomes'][genome]:
-            color = 'black'
-        else:
-            color = "red"
+        match self.G.nodes[node].get('type'):
+            case 'steps':
+                count = sum(self.G.nodes[node]['genomes'][genome])
+                total = len(self.G.nodes[node]['genomes'][genome])
+                self.dot.node(
+                    node,
+                    f"{self.G.nodes[node]['display']} {count} of {total}",
+                    color="grey")
+                self.dot.edge(parent, node, color="grey")
+                return
+            case 'inGenomeCount':
+                return
+            case _:
+                if self.G.nodes[node]['genomes'][genome]:
+                    color = 'black'
+                else:
+                    color = "red"
         self.dot.node(node, self.G.nodes[node]['display'], color=color)
         if parent is not None:
             self.dot.edge(parent, node, color=color)
@@ -250,50 +264,45 @@ class RuleParser():
             if self.G[node].get('type') != 'steps':
                 self.add_to_dot_genome(i, genome, parent=node)
 
-
-    def plot_all(self, output_folder,  show_steps=False):
-        self.dot = graphviz.Digraph(strict=True)
-        self.show_steps = show_steps
-        for i in self.root_nodes:
-            self.add_to_dot(i)
-        self.dot.render(os.path.join(output_folder, "All"), view=False)
-
-
-    def plot_all_adj_genome(self, output_folder, genome:str,  show_steps=False):
-        self.dot = graphviz.Digraph(strict=True)
-        self.show_steps = show_steps
-        for i in self.root_nodes:
-            self.add_to_dot_genome(i, genome)
-        self.dot.render(os.path.join(output_folder, f"All_{genome}"),
-                   view=False)
-
-
-    def plot_adj_genome(self, output_folder, adj,  genome:str,  show_steps=False):
+    def plot_adj_genome(self, output_folder, adj,  genome:str,
+                        show_steps=False):
         self.dot = graphviz.Digraph(strict=True)
         self.show_steps = show_steps
         self.add_to_dot_genome(adj, genome)
         self.dot.render(os.path.join(output_folder, genome, adj), view=False)
 
 
-    def plot_all_adj_all_genome(self, output_folder, show_steps=False):
-        for adj in self.root_nodes:
-            for genome in self.annot.ids_by_fasta.index:
-                self.plot_adj_genome(output_folder, adj, genome, show_steps)
-
-
-    def plot_adj(self, output_folder, adjective, show_steps=False):
-        self.dot = graphviz.Digraph(strict=True)
-        self.show_steps = show_steps
-        self.add_to_dot(adjective)
-        self.dot.render(os.path.join(output_folder, adjective), view=False)
-
+    def plot_cause(self, output_folder, adjectives=None,
+                                genomes=None,  show_steps=False):
+        match (adjectives, genomes):
+            case ((), ()):
+                for adj in self.root_nodes:
+                    for genome in self.annot.ids_by_fasta.index:
+                        self.plot_adj_genome(output_folder, adj, genome,
+                                             show_steps)
+            case (_, ()):
+                for adj in adjectives:
+                    for genome in self.annot.ids_by_fasta.index:
+                        self.plot_adj_genome(output_folder, adj, genome,
+                                             show_steps)
+            case ((), _):
+                for adj in self.root_nodes:
+                     for genome in genomes:
+                         self.plot_adj_genome(output_folder, adj, genome,
+                                              show_steps)
+            case (_, _):
+                for adj in adjectives:
+                     for genome in genomes:
+                         self.plot_adj_genome(output_folder, adj, genome,
+                                              show_steps)
+            case _:
+                raise ValueError("There was an error in ploting the genomes.")
 
     def cycle_evaluate(self, node, genome_name:str, annotations:set):
         steps = [self.check_node(i, genome_name, annotations)
                  for i in self.G.successors(node)]
         self.G.nodes[node]['genomes'][genome_name] = steps
         return steps
-
 
     def atleastfunk(self, node, genome_name:str, annotations:set):
         count_val = int(self.G.nodes[node].get('args'))
@@ -304,14 +313,14 @@ class RuleParser():
         steps = self.cycle_evaluate(cycle, genome_name, annotations)
         return sum(steps) >= count_val
 
-
     #TODO new class
     def percentfunk(self, node, genome_name:str, annotations:set):
         percent_val = float(self.G.nodes[node].get('args'))
         cycle_list = list(self.G.successors(node))
         cycle = cycle_list[0]
         if len(cycle_list) > 1 or self.G.nodes[cycle]['type'] != 'steps':
-            raise ValueError("Percent functions can only point to named cycles")
+            raise ValueError("Percent functions can only point to"
+                             " named cycles")
         steps = self.cycle_evaluate(cycle, genome_name, annotations)
         return ((sum(steps) / len(steps)) * 100) >= percent_val
 
@@ -328,7 +337,6 @@ class RuleParser():
         if len(successor) > 1:
             raise ValueError("A step can have only one child, this is a programing error")
         return self.check_node(successor[0], genome_name, annotations)
-
 
     def evaluate_node(self, node, genome_name, annotations):
         match self.G.nodes[node]['type']:
