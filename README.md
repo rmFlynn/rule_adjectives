@@ -6,7 +6,8 @@ The script is currently a blunt implement but there is more in there.
 
 Download the git repo, and change your directory to its root.
 ```
-
+git clone https://github.com/rmFlynn/rule_adjectives.git
+cd rule_adjectives
 ```
 
 Install the conda environment:
