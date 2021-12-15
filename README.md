@@ -13,7 +13,7 @@ cd rule_adjectives
 Install the conda environment:
 
 ```
-conda env create enviroment.yml
+conda env create -f environment.yaml
 conda activate rule_adjectives
 ```
 
