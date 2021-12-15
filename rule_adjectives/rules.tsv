@@ -91,7 +91,7 @@ Rumarate Reduction	FumarateReduction	atleast:1:FumarateReductionParts
 	FumarateReductionParts	K00244,K00245,K00246,K00247
 Tetrathionate Reduction	TetrathionateReduction	[1ofttrrs&1ofttrabc]|2ofttrabc 
 	1ofttrrs	K13040|K13041
-	2ofttrrs	atleast:2:ttrabc
-	1ofttrrs	atleast:1:ttrabc
+	2ofttrabc	atleast:2:ttrabc
+	1ofttrabc	atleast:1:ttrabc
 	ttrabc	K08359,K08358,K08357
 
