@@ -1,5 +1,5 @@
 name	parent	child
-Autotroph	Autotroph	Calvin|ReductiveCitricAcid|HydroxypropionateHydroxybutylate|DicarboxylateHydroxybutyrate|3Hydroxypropionate|ReductiveAcetylCoAWoodLjungdahl
+Aevaluate_nodeutotroph	Autotroph	Calvin|ReductiveCitricAcid|HydroxypropionateHydroxybutylate|DicarboxylateHydroxybutyrate|3Hydroxypropionate|ReductiveAcetylCoAWoodLjungdahl
 Heterotroph	Heterotroph	not:Autotroph
 	Calvin	2OxoglutarateFerredoxinOxidoreductase&CalvinCycle50p
 	CalvinCycle50p	percent:50:CalvinCycle
@@ -77,7 +77,8 @@ Microaerophillic	Microaerophillic	[percent50CytochromeBDUbiquinolOxidase|percent
 	percent50CytochromeCOxidaseCBB3	percent:50:CytochromeCOxidaseCBB3
 	CytochromeBDUbiquinolOxidase	K00425,K00426,K00424|K22501
 	CytochromeCOxidaseCBB3	K00404|K00405|K15862,K00407,K00406
-PotentialIronUtilizer	PotentialIronUtilizer	inGenomeCount:3:isIron
+PotentialIronUtilizer	place_holder	False
+	PotentialIronUtilizer	inGenomeCount:3:isIron
 	isIron	hemeCountGT3&cytochromC&NotNarNapNrf
 	cytochromC	False
 	NRF	False
@@ -89,9 +90,11 @@ Non ETC Oxidase	NonETCOxidase	[percent50CytochromeCOxidase|percent50CytochromeAa
 Denitrifier	Denitrifier	ETC50&[NitrateReductase|NitriteReductase|NitricOxideReductase|NitrousOxideReductase]
 Rumarate Reduction	FumarateReduction	atleast:1:FumarateReductionParts
 	FumarateReductionParts	K00244,K00245,K00246,K00247
-Tetrathionate Reduction	TetrathionateReduction	[1ofttrrs&1ofttrabc]|2ofttrabc 
+Tetrathionate Reduction	TetrathionateReduction	[1ofttrrs&1ofttrabc]|2ofttrabc
 	1ofttrrs	K13040|K13041
 	2ofttrabc	atleast:2:ttrabc
 	1ofttrabc	atleast:1:ttrabc
 	ttrabc	K08359,K08358,K08357
+
+
 

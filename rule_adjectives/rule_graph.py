@@ -366,7 +366,7 @@ class RuleParser():
                 return not np.all([self.check_node(i, genome_name, annotations)
                                     for i in self.G.successors(node)])
             case  'columnvalue':
-                data = self.annot.data['by_index'].loc[genome_name]
+                data = self.annot.data.loc[genome_name]
                 arg_dict = self.G.nodes[node]['args']
                 if arg_dict['comp'] == 'gt':
                     return int(arg_dict['val']) > data[arg_dict['col']]
@@ -384,7 +384,7 @@ class RuleParser():
                 successor = successor[0]
                 if self.annot.ids_by_row is None:
                     self.annot.set_annotation_ids_by_row()
-                count = sum(self.annot.by_fasta.apply(
+                count = sum(self.annot.ids_by_row.apply(
                     lambda x: self.check_node(successor,
                                               x.name,
                                               x.annotations
