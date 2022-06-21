@@ -7,7 +7,6 @@ import pandas as pd
 from collections import Counter
 
 def get_ids_from_annotation(frame):
-    breakpoint()
     id_list = list()
     # get kegg ids
     if 'ko_id' in frame:
