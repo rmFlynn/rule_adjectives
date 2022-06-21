@@ -14,13 +14,13 @@ Install the conda environment:
 
 ```
 conda env create -f environment.yaml
-conda activate rule_adjectives
+conda activate rule_adjectives # Don't forget this step
 ```
 
 Install the packeg:
 
 ```
-pip install ./
+pip install -e ./ # yes you need the -e for now
 ```
 
 This is a temporary method of installation while the program is in beta, but a better method will be created after that.
