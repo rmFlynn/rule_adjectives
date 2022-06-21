@@ -40,11 +40,6 @@ Usage: rule_adjectives ANNOTATIONS_TSV OUT_TSV [OPTIONS]
 
   annotations_tsv: Path to a DRAM annotations file. 
   out_tsv: Path for the output adjectives true / false table. 
-  rules_tsv: Path to a rules file with strict formating, this is optional. 
-  adjectives: Adjectives to evaluate. 
-  plot_adjectives: Adjectives to plot 
-  plot_genomes: Genomes to plot. 
-  plot_path: The path that will become a folder of output plots, no path no plots.
 
 Options:
   -a, --adjectives TEXT         #Takes a string of text which equal specific adjectives in the out_tsv adjectives true / false table to report.
