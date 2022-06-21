@@ -51,7 +51,7 @@ Options:
   -p, --plot_adjectives TEXT    #Takes a string of text which equal specific adjectives in the out_tsv adjectives true / false table to plot.
   -g, --plot_genomes TEXT       #Takes a string of text which equal the name of a specific (or subset) of genome(s) in the out_tsv adjectives true / false table to plot.
   --plot_path PATH              #The path that will become a folder of output plots. No path - no plots.
-  --rules_tsv PATH              #The path of additional rules that will be implemented when calling adjectives. 
+  --rules_tsv PATH              #A path of alternative rules that will overwrite the defaults when calling adjectives. 
   --help                        #Show this message and exit.
 
 ```
