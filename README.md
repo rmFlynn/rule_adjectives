@@ -20,7 +20,7 @@ conda activate rule_adjectives
 Install the packeg:
 
 ```
-pip install -e ./
+pip install ./
 ```
 
 This is a temporary method of installation while the program is in beta, but a better method will be created after that.
