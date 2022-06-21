@@ -57,7 +57,7 @@ Here is an example that will make a table for all adjectives together:
 rule_adjectives ./annotations.tsv ./adjectives.tsv
 ```
 
-Here is an example that will make a table for all adjectives and plots for each genome of all metabolisms:
+Here is an example that will make a table for all adjectives as well as plots for each genome of for each adjective:
 
 ```
 rule_adjectives ./annotations.tsv ./adjectives.tsv --plot_path ./path_for_plots
