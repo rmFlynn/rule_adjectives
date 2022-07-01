@@ -94,27 +94,45 @@ def ko_func(ko:str, annotations):
     return ko in annotations
 
 
+def camper_func(ko:str, annotations):
+    return ko in annotations
+
+
+def fegenie_func(ko:str, annotations):
+    return ko in annotations
+
 def pf_func(pf:str, annotations):
     return pf in annotations
 
 
+
+""".
+import os
+os.system('rule_adjectives data/annotations_pw_drepped_with_cf.tsv results/adjectives_pw_drepped_with_cf.tsv')
+"""
 class RuleParser():
 
-
     def __init__(self, rule_path:str, verbose:bool=False,
-                 adjectives:set=None):
+                 adjectives:set[str]=None):
 
         self.annotations = None
         self.G = nx.DiGraph()
         self.verbose = verbose
         self.data = pd.read_csv(rule_path, sep='\t')
+        if not self.data['parent'].is_unique:
+            dup_ids = self.data['parent'].duplicated(keep='first')
+            dups = self.data['parent'][dup_ids].values
+            raise SyntaxError(
+                f"There are {len(dups)} duplicated parent name/names in"
+                f" {rule_path}.\n"
+                f"the duplicates are {dups}.\n"
+                "you must correct these errors to continue.")
         self.data.set_index('parent', inplace=True)
         self.bipart_dict = {i:{
                 j:self.data.loc[i,j] for j in self.data.columns
             } for i in self.data.index}
         selfidx = 0
         self.set_adjectives(adjectives) # automaticaly parses
-
 
     def set_adjectives(self, adjectives:set=None):
         adj_names = set(self.data['name'].dropna().values)
@@ -136,8 +154,7 @@ class RuleParser():
         for i in self.root_nodes:
             self.parse(i)
 
-
-    def parse(self, logic:str, parent:str = None):
+    def parse(self, logic:str, parent:str=None):
         if self.verbose:
             print(f"Parsing: {logic}")
         if (line := self.bipart_dict.get(logic)) is not None:
@@ -169,10 +186,21 @@ class RuleParser():
                             function=ko_func, genomes={})
             self.G.add_edge(parent, nodeid)
             return
+        if re.match(r'^D[0-9,\.]+$', logic):
+            nodeid = logic
+            self.G.add_node(nodeid, display=nodeid, type='camper',
+                            function=camper_func, genomes={})
+            self.G.add_edge(parent, nodeid)
+            return
+        if re.match(r'^fe>[0-9A-z]+$', logic):
+            nodeid = logic[3:]
+            self.G.add_node(nodeid, display=nodeid, type='fegenie', function=fegenie_func, genomes={})
+            self.G.add_edge(parent, nodeid)
+            return
         if re.match(r'^PF\d+', logic):
             nodeid = logic
             self.G.add_node(nodeid, display=nodeid, type='PF',
-                            function=ko_func, genomes={})
+                            function=pf_func, genomes={})
             self.G.add_edge(parent, nodeid)
             return
         if re.match(r'^EC[0-9,\.]+[0-9,-]$', logic):
@@ -351,6 +379,10 @@ class RuleParser():
             case  'ec':
                 return self.G.nodes[node]['function'](node, annotations)
             case  'ko':
+                return self.G.nodes[node]['function'](node, annotations)
+            case  'camper':
+                return self.G.nodes[node]['function'](node, annotations)
+            case  'fegenie':
                 return self.G.nodes[node]['function'](node, annotations)
             case  'pf':
                 return self.G.nodes[node]['function'](node, annotations)

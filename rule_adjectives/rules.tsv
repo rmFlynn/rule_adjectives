@@ -49,7 +49,7 @@ annamox	annamox	HydrazineDeydrogenase&HydrazineSynthase
 	HydrazineSynthase	EC1.7.2.7|K20932|K20933|K20934
 Nitrogenfixer	Nitrogenfixer	Nitrogenase
 	Nitrogenase	EC1.18.6.1|EC1.18.6.2|K02591|K02586|K02588|K00531|K22897|K22896|K22898|K22899
-Phototroph	Phototroph	PhotosystemI|PhotosystemII
+Photosynthetic	Phototroph	PhotosystemI|PhotosystemII
 	PhotosystemI	K02689|K02690|K026901|K02692|K02693|K02694
 	PhotosystemII	K02703|K02706
 	ETC60	percent60ComplexIA|percent60ComplexIB|percent60ComplexIC
@@ -77,14 +77,22 @@ Microaerophillic	Microaerophillic	[percent50CytochromeBDUbiquinolOxidase|percent
 	percent50CytochromeCOxidaseCBB3	percent:50:CytochromeCOxidaseCBB3
 	CytochromeBDUbiquinolOxidase	K00425,K00426,K00424|K22501
 	CytochromeCOxidaseCBB3	K00404|K00405|K15862,K00407,K00406
-PotentialIronUtilizer	place_holder	False
-	PotentialIronUtilizer	inGenomeCount:3:isIron
-	isIron	hemeCountGT3&cytochromC&NotNarNapNrf
-	cytochromC	False
-	NRF	False
-	hemeCountGT3	columnvalue:gt:3:heme_regulatory_motif_count
 	NotNarNapNrf	not:NarNapNrf
 	NarNapNrf	NitrateReductase|NRF
+Iron Oxidation	IronOxidation	[Cyc2|PioA|fe>sulfocyanin|foxEYZ|foxABC]&[Microaerophillic|Aerobe|sulfatereducer|Denitrifier|Phototroph]
+	Cyc2	fe>Cyc2_repCluster1
+	PioA	PlaceHolder
+	foxEYZ	fe>FoxE|fe>FoxY|fe>FoxZ
+	foxABC	fe>FoxA|fe>FoxB|fe>FoxC
+	PlaceHolder	False
+Probable Iron Reduction	ProbIronReduction	[notIronReductionGenes|hemeCount]&ETC50
+	notIronReductionGenes	not:IronReductionGenes
+	hemeCount	inGenomeCount:3:hemeCountGT3
+	hemeCountGT3	columnvalue:gt:3:heme_regulatory_motif_count
+Iron Reduction	IronReduction	IronReductionGenes&ETC50
+	IronReductionGenes	mtrCAB|fe>omcF|fe>omcS|fe>omcZ|fe>DFE_operons|fe>FmnA
+	mtrCAB	fe>MtrA&fe>MtrB_TIGR03509&fe>MtrC_TIGR03507
+	DFE_operons	fe>DFE_0448|fe>DFE_0449|fe>DFE_0450|fe>DFE_0451|fe>DFE_0461|fe>DFE_0462|fe>DFE_0463|fe>DFE_0464|fe>DFE_0465|
 Non ETC Oxidase	NonETCOxidase	[percent50CytochromeCOxidase|percent50CytochromeAa3600MenaquinolOxidase|percent50CytochromeOUbiquinolOxidase|percent50CytochromeBDUbiquinolOxidase|percent50CytochromeCOxidaseCBB3]&notETC50
 	notETC50	not:ETC50
 Denitrifier	Denitrifier	ETC50&[NitrateReductase|NitriteReductase|NitricOxideReductase|NitrousOxideReductase]
