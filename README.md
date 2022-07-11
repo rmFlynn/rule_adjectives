@@ -87,4 +87,6 @@ rule_adjectives ./annotations.tsv ./adjectives.tsv \
 ```
 
 # Notes
-Iron utilizer adjective is not yet fully supported
+ * You must annotate with DRAM.1.4 or newer using the **FeGelein** database, for iron annotations to work correctly. 
+ * If you are in Wrighton lab using zenith you can access annotations in the scripts' environment, contact Rory Flynn if you have trouble accessing the scripts' environment. 
+ * Tree based improvements are in the works. 
