@@ -4,7 +4,7 @@ import click
 from rule_adjectives.rule_graph import RuleParser
 from rule_adjectives.annotations import Annotations
 
-__version__ = '0.0.2'
+__version__ = '0.0.3'
 
 
 class PythonLiteralOption(click.Option):
