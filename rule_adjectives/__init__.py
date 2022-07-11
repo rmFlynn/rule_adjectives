@@ -65,4 +65,3 @@ def evaluate(annotations_tsv:str, out_tsv:str,
     output.to_csv(out_tsv, sep='\t')
 
 
-
