@@ -2,9 +2,9 @@
 from setuptools import setup, find_packages
 # from some_python_init_file import __version__ as version
 from os import path
+from rule_adjectives import __version__
 
 __author__ = 'rmflynn'
-__version__ = '0.0.1'
 
 here = path.abspath(path.dirname(__file__))
 

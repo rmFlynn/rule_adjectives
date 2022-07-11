@@ -4,6 +4,8 @@ import click
 from rule_adjectives.rule_graph import RuleParser
 from rule_adjectives.annotations import Annotations
 
+__version__ = '0.0.2'
+
 
 class PythonLiteralOption(click.Option):
 
@@ -28,6 +30,7 @@ def get_package_path(local_path):
 
 
 @click.command()
+@click.version_option(__version__)
 @click.argument('annotations_tsv', type=click.Path(exists=True), required=1)
 @click.argument('out_tsv', type=click.Path(exists=False), required=1)
 @click.option('-a', '--adjectives', multiple=True, default=[])
