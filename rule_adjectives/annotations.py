@@ -50,12 +50,12 @@ class Annotations():
 
 
     def set_annotations(self, annotations_tsv:str):
-        self.data = pd.read_csv(annotations_tsv, sep='\t', index_col=0)
+        self.data = pd.read_csv(annotations_tsv, sep='\t', index_col=0, low_memory=False)
         # anno_data['dram_index'] = anno_data.index
         #TODO, make less lame
-        data = self.data.copy()
+        self.data.set_index(['fasta', self.data.index], inplace=True)
         #TODO split
-        annot_fasta_ids =data.groupby('fasta')
+        annot_fasta_ids =self.data.groupby('fasta')
         annot_fasta_ids = annot_fasta_ids.apply(get_ids_from_annotation)
         annot_fasta_ids = pd.DataFrame(annot_fasta_ids,
                                        columns=['annotations'])

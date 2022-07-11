@@ -79,6 +79,12 @@ def parse_functions(logic):
         args = {'comp':out[1], 'val':out[2], 'col':out[3]}
         kids = None
         return name, args, kids
+    if re.match(r'^columncontains:[A-z,0-9]+:[A-z,0-9]+$', logic):
+        out = logic.split(':')
+        name = out[0]
+        args = {'col':out[1], 'val':out[2]}
+        kids = None
+        return name, args, kids
 
 
 def ec_func(ec:str, annotations):
@@ -398,12 +404,21 @@ class RuleParser():
                 return not np.all([self.check_node(i, genome_name, annotations)
                                     for i in self.G.successors(node)])
             case  'columnvalue':
+                # data = self.annot.data.copy()
+                # data.set_index(['fasta', data.index], inplace=True)
                 data = self.annot.data.loc[genome_name]
                 arg_dict = self.G.nodes[node]['args']
                 if arg_dict['comp'] == 'gt':
-                    return int(arg_dict['val']) > data[arg_dict['col']]
+                    return int(arg_dict['val']) > sum(data[arg_dict['col']])
                 else:
                     raise ValueError('NoT fully implimented')
+            case  'columncontains':
+                data = self.annot.data.loc[genome_name]
+                arg_dict = self.G.nodes[node]['args']
+                data.columns
+                for i in data[arg_dict['col']].values:
+                    if arg_dict['val'] in str(i):
+                        return True
             case  'atleast':
                 return self.atleastfunk(node, genome_name, annotations)
             case  'inGenomeCount':

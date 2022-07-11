@@ -85,10 +85,12 @@ Iron Oxidation	IronOxidation	[Cyc2|PioA|fe>sulfocyanin|foxEYZ|foxABC]&[Microaero
 	foxEYZ	fe>FoxE|fe>FoxY|fe>FoxZ
 	foxABC	fe>FoxA|fe>FoxB|fe>FoxC
 	PlaceHolder	False
-Probable Iron Reduction	ProbIronReduction	[notIronReductionGenes|hemeCount]&ETC50
+Probable Iron Reduction	ProbIronReduction	[notIronReductionGenes|hemeCountGT3]&ETC50&NotUnironDescription
 	notIronReductionGenes	not:IronReductionGenes
 	hemeCount	inGenomeCount:3:hemeCountGT3
 	hemeCountGT3	columnvalue:gt:3:heme_regulatory_motif_count
+	NotUnironDescription	not:UnironDescription
+	UnironDescription	columncontains:kegg_hit:NitrateReducer
 Iron Reduction	IronReduction	IronReductionGenes&ETC50
 	IronReductionGenes	mtrCAB|fe>omcF|fe>omcS|fe>omcZ|fe>DFE_operons|fe>FmnA
 	mtrCAB	fe>MtrA&fe>MtrB_TIGR03509&fe>MtrC_TIGR03507
