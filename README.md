@@ -86,6 +86,17 @@ rule_adjectives ./annotations.tsv ./adjectives.tsv \
         -g bin1.scaffold2
 ```
 
+DRAM can also help you extract the gene sequences for the adjectives of your choice. This can help for things like making phylogenetic trees of Nar/Nxr/Nap genes.
+
+First, run DRAM Adjectives using the --strainer_tsv argument.
+
+rule_adjectives ./annotations.tsv ./adjectives.tsv --strainer_tsv strainer_output.tsv
+
+Then, using DRAM strainer, filter out the genes for each of the positive hits. 
+Note: You can filter out the table for any specific genes you want to pull out before you run these next commands.
+
+DRAM.py strainer -f genes_strainer_out.fna -i strainer_output.tsv
+
 # Notes
  * You must annotate with DRAM.1.4 or newer using the **FeGelein** database, for iron annotations to work correctly. 
  * If you are in Wrighton lab using zenith you can access annotations in the scripts' environment, contact Rory Flynn if you have trouble accessing the scripts' environment. 
