@@ -4,25 +4,24 @@ convenient transformations.
 """
 import re
 import pandas as pd
-import numpy as np
 from collections import Counter
 from itertools import chain
-import dask.dataframe as dd
+# import dask.dataframe as dd
 
-FUNCTION_DICT = { 
+FUNCTION_DICT = {
     'camper_id': lambda x: [x],
     'fegenie_id': lambda x: [x],
     'sulfur_id': lambda x: [x],
     'kegg_genes_id': lambda x: [x],
     'ko_id': lambda x: [j for j in x.split(',')],
     'kegg_id': lambda x: [j for j in x.split(',')],
-    'kegg_hit': lambda x: [i[1:-1] for i in 
+    'kegg_hit': lambda x: [i[1:-1] for i in
                            re.findall(r'\[EC:\d*.\d*.\d*.\d*\]', x)],
     'peptidase_family': lambda x: [j for j in x.split(';')],
     'cazy_id': lambda x: [i.split('_')[0] for i in x.split('; ')],
-    'cazy_hits': lambda x: [f"{i[1:3]}:{i[4:-1]}" for i in 
+    'cazy_hits': lambda x: [f"{i[1:3]}:{i[4:-1]}" for i in
                             re.findall(r'\(EC [\d+\.]+[\d-]\)', x)],
-    'cazy_subfam_ec': lambda x: [f"EC:{i}" for i in 
+    'cazy_subfam_ec': lambda x: [f"EC:{i}" for i in
                                  re.findall(r'[\d+\.]+[\d-]', x)],
     'pfam_hits': lambda x: [j[1:-1].split('.')[0]
                             for j in re.findall(r'\[PF\d\d\d\d\d.\d*\]', x)]

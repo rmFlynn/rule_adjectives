@@ -18,6 +18,7 @@ setup(
     entry_points={
         "console_scripts": [
             "rule_adjectives = rule_adjectives:evaluate"# ,
+            "rule_plot = rule_adjectives:rule_plot"# ,
             # "snakemake-bash-completion = snakemake:bash_completion",
         ]
     },
