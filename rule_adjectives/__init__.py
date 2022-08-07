@@ -33,6 +33,14 @@ def get_package_path(local_path):
         local_path)
     return abs_snake_path
 
+def list_adjectives(ctx, param, value):
+    if not value or ctx.resilient_parsing:
+        return
+    rules = RuleParser(get_package_path('rules.tsv'), verbose=False)
+    print("In the current rules file, these adjectives are available:")
+    for i in rules.data['name'].unique():
+        print(i)
+
 
 @click.command()
 @click.version_option(__version__)
@@ -46,14 +54,21 @@ def get_package_path(local_path):
               default=None)
 @click.option('--strainer_tsv', type=click.Path(exists=False), default=None)
 @click.option('--strainer_type', type=click.Path(exists=False), default=None)
+@click.option('--debug_ids_by_fasta_to_tsv', type=click.Path(exists=False), default=None)
 @click.option('--rules_tsv', type=click.Path(exists=True),
               default=get_package_path('rules.tsv'),
               help='The path that will become a folder of output plots, no path no plots.') # , help='The rules file which adhere to strict formating' )
+@click.option('--list', is_flag=True, callback=list_adjectives,
+              expose_value=False, is_eager=True, 
+              help="List the names for all adjectives_tsv that are"
+              " available, you can pass these names to limit the"
+              " adjectives that are evaluated")
 # @click.argument('-p', type=click.Path(exists=True))
 def evaluate(annotations_tsv:str, adjectives_tsv:str,
              rules_tsv:str=get_package_path('rules.tsv'),
              adjectives:list=None, plot_adjectives:list=None,
              plot_genomes:list=None,plot_path:str=None,
+             debug_ids_by_fasta_to_tsv:str=None,
              strainer_tsv:str=None, strainer_type='pgtb'):
     """
     Using a DRAM annotations file make a table of adjectives.
@@ -72,6 +87,9 @@ def evaluate(annotations_tsv:str, adjectives_tsv:str,
     rules = RuleParser(rules_tsv, verbose=False, adjectives=adjectives)
     annotations = Annotations(annotations_tsv)
     adjectives = rules.check_genomes(annotations)
+    if debug_ids_by_fasta_to_tsv is not None:
+        annotations.ids_by_fasta.to_csv(debug_ids_by_fasta_to_tsv, sep='\t')
+        exit()
     adjectives.to_csv(adjectives_tsv, sep='\t')
     # annotations.ids_by_fasta.iloc[1]['annotations']
     if plot_path is not None:

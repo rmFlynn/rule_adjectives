@@ -376,77 +376,6 @@ class RuleParser():
             raise ValueError("A step can have only one child, this is a programing error")
         return self.check_node(successor[0], genome_name, annotations)
 
-    def evaluate_node(self, node, genome_name, annotations):
-        match self.G.nodes[node]['type']:
-            case 'name':
-                return self.name_func(node, genome_name, annotations)
-            case 'step':
-                return self.step_func(node, genome_name, annotations)
-            case  'False':
-                return False
-            case  'True':
-                return True
-            case  'ec':
-                return self.G.nodes[node]['function'](node, annotations)
-            case  'ko':
-                return self.G.nodes[node]['function'](node, annotations)
-            case  'camper':
-                return self.G.nodes[node]['function'](node, annotations)
-            case  'fegenie':
-                return self.G.nodes[node]['function'](node, annotations)
-            case  'sulfur':
-                return self.G.nodes[node]['function'](node, annotations)
-            case  'pf':
-                return self.G.nodes[node]['function'](node, annotations)
-            case  'or':
-                return np.any([self.check_node(i, genome_name, annotations)
-                                for i in self.G.successors(node)])
-            case  'and':
-                return np.all([self.check_node(i, genome_name, annotations)
-                                for i in self.G.successors(node)])
-            case  'percent':
-                return self.percentfunk(node, genome_name, annotations)
-            case  'not':
-                return not np.all([self.check_node(i, genome_name, annotations)
-                                    for i in self.G.successors(node)])
-            case  'columnvalue':
-                # data = self.annot.data.copy()
-                # data.set_index(['fasta', data.index], inplace=True)
-                data = self.annot.data.loc[genome_name]
-                arg_dict = self.G.nodes[node]['args']
-                if arg_dict['comp'] == 'gt':
-                    return int(arg_dict['val']) > sum(data[arg_dict['col']])
-                else:
-                    raise ValueError('NoT fully implimented')
-            case  'columncontains':
-                data = self.annot.data.loc[genome_name]
-                arg_dict = self.G.nodes[node]['args']
-                data.columns
-                for i in data[arg_dict['col']].values:
-                    if arg_dict['val'] in str(i):
-                        return True
-            case  'atleast':
-                return self.atleastfunk(node, genome_name, annotations)
-            case  'inGenomeCount':
-            #TODO Fix
-                successor = list(self.G.successors(node))
-                if len(successor) > 1:
-                    raise ValueError("A inGenomeCount can have only one child,"
-                                     " this is a programing error")
-                successor = successor[0]
-                if self.annot.ids_by_row is None:
-                    self.annot.set_annotation_ids_by_row()
-                count = sum(self.annot.ids_by_row.apply(
-                    lambda x: self.check_node(successor,
-                                              x.name,
-                                              x.annotations
-                                              ),
-                    axis=1))
-                return int(self.G.nodes[node]['args']) <= count
-            case  'error':
-                 raise TypeError(f"Something failed to parse! What is {node}")
-            case _:
-                raise ValueError(f"There was and error, in evaluation, no rule for {node}")
 
     # TODO make this a match
     def check_node(self, node:str, genome_name:str, annotations:set):
@@ -520,22 +449,22 @@ class RuleParser():
                         return True
             case  'atleast':
                 return self.atleastfunk(node, genome_name, annotations)
-            case  'inGenomeCount':
-            #TODO Fix
-                successor = list(self.G.successors(node))
-                if len(successor) > 1:
-                    raise ValueError("A inGenomeCount can have only one child,"
-                                     " this is a programing error")
-                successor = successor[0]
-                if self.annot.ids_by_row is None:
-                    self.annot.set_annotation_ids_by_row()
-                count = sum(self.annot.ids_by_row.apply(
-                    lambda x: self.check_node(successor,
-                                              x.name,
-                                              x.annotations
-                                              ),
-                    axis=1))
-                return int(self.G.nodes[node]['args']) <= count
+            # case  'inGenomeCount':
+            # #TODO Fix
+            #     successor = list(self.G.successors(node))
+            #     if len(successor) > 1:
+            #         raise ValueError("A inGenomeCount can have only one child,"
+            #                          " this is a programing error")
+            #     successor = successor[0]
+            #     if self.annot.ids_by_row is None:
+            #         self.annot.set_annotation_ids_by_row()
+            #     count = sum(self.annot.ids_by_row.apply(
+            #         lambda x: self.check_node(successor,
+            #                                   x.name,
+            #                                   x.annotations
+            #                                   ),
+            #         axis=1))
+            #     return int(self.G.nodes[node]['args']) <= count
             case  'error':
                  raise TypeError(f"Something failed to parse! What is {node}")
             case _:
@@ -568,8 +497,6 @@ class RuleParser():
 
 
 def get_annot_data_for_positive_genes(annotations, fasta_names, positive_leaves):
-    if annotations.ids_by_row is None:
-        annotations.set_annotation_ids_by_row()
     anno_data = (annotations.ids_by_row.loc[fasta_names]
                  .copy()
                  .apply(lambda x: set(x['annotations']), axis=1))
@@ -642,5 +569,5 @@ adjectives_dat = rules.check_genomes(annotations)
 get_positive_genes(rules, annotations, adjectives_dat)
 
 import os
-os.system('rule_adjectives data/annotations_pw_drepped_with_cf.tsv results/adjectives_pw_drepped_with_cf.tsv')
+os.system('rule_adjectives /home/projects-wrighton-2/GROWdb/Yojoa_Hall/All_Med_High_bins/DRAM_per_bin/dRep_DRAM/merged_572_DRAM_annotations/annotations.tsv test.tsv')
 """
