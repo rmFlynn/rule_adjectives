@@ -33,7 +33,17 @@ def get_package_path(local_path):
         local_path)
     return abs_snake_path
 
+
 def list_adjectives(ctx, param, value):
+    if not value or ctx.resilient_parsing:
+        return
+    rules = RuleParser(get_package_path('rules.tsv'), verbose=False)
+    print("In the current rules file, these adjectives are available:")
+    for i in rules.data.index[~rules.data['name'].isna()].unique():
+        print(i)
+
+
+def list_adjective_name(ctx, param, value):
     if not value or ctx.resilient_parsing:
         return
     rules = RuleParser(get_package_path('rules.tsv'), verbose=False)
@@ -58,8 +68,13 @@ def list_adjectives(ctx, param, value):
 @click.option('--rules_tsv', type=click.Path(exists=True),
               default=get_package_path('rules.tsv'),
               help='The path that will become a folder of output plots, no path no plots.') # , help='The rules file which adhere to strict formating' )
-@click.option('--list', is_flag=True, callback=list_adjectives,
-              expose_value=False, is_eager=True, 
+@click.option('--list_name', is_flag=True, callback=list_adjective_name,
+              expose_value=False, is_eager=True,
+              help="List the names for all adjectives_tsv that are"
+              " available, you can pass these names to limit the"
+              " adjectives that are evaluated")
+@click.option('--list_id', is_flag=True, callback=list_adjectives,
+              expose_value=False, is_eager=True,
               help="List the names for all adjectives_tsv that are"
               " available, you can pass these names to limit the"
               " adjectives that are evaluated")
@@ -108,6 +123,16 @@ def evaluate(annotations_tsv:str, adjectives_tsv:str,
 @click.option('--rules_tsv', type=click.Path(exists=True),
               default=get_package_path('rules.tsv'),
               help='The path that will become a folder of output plots, no path no plots.') # , help='The rules file which adhere to strict formating' )
+@click.option('--list_name', is_flag=True, callback=list_adjective_name,
+              expose_value=False, is_eager=True,
+              help="List the names for all adjectives_tsv that are"
+              " available, you can pass these names to limit the"
+              " adjectives that are evaluated")
+@click.option('--list_id', is_flag=True, callback=list_adjectives,
+              expose_value=False, is_eager=True,
+              help="List the names for all adjectives_tsv that are"
+              " available, you can pass these names to limit the"
+              " adjectives that are evaluated")
 # @click.argument('-p', type=click.Path(exists=True))
 def rule_plot(rules_tsv:str=get_package_path('rules.tsv'),
                adjectives:list=None, plot_path:str=None):
@@ -126,4 +151,4 @@ def rule_plot(rules_tsv:str=get_package_path('rules.tsv'),
         the only option at this time is pgtb for positive genes that are on true bugs.
     """
     rules = RuleParser(rules_tsv, verbose=False, adjectives=adjectives)
-    rules.plot_rule(plot_path, adjectives)
+    rules.plot_rule(plot_path)

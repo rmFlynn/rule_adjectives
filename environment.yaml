@@ -12,4 +12,4 @@ dependencies:
   - pytest
   - networkx
   - pip
-  - dask
+  - dot

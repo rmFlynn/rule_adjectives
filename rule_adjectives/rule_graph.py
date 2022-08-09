@@ -147,14 +147,14 @@ class RuleParser():
         else:
             keep_adj = set(adjectives)
             if not keep_adj.issubset(adj_names):
+                breakpoint()
                 raise ValueError(
-                    f"No such adjectives {adjectives - adj_names}")
+                    f"No such adjectives {keep_adj - adj_names}")
         self.root_nodes = set(
             self.data[
                 self.data['name'].apply(lambda x: x in keep_adj)
             ].index.values)
         self.parse_rules()  # parse/reparse the rules
-
 
     def parse_rules(self):
         for i in self.root_nodes:
@@ -275,7 +275,6 @@ class RuleParser():
             self.add_to_dot(i)
         self.dot.render(os.path.join(output_folder, "All"), view=False)
 
-
     def add_to_dot_genome(self, node, genome, parent=None):
         match self.G.nodes[node].get('type'):
             case 'steps':
@@ -308,7 +307,6 @@ class RuleParser():
         self.show_steps = show_steps
         self.add_to_dot_genome(adj, genome)
         self.dot.render(os.path.join(output_folder, genome, adj), view=False)
-
 
     def plot_cause(self, output_folder, adjectives=None,
                                 genomes=None,  show_steps=False):
@@ -361,7 +359,6 @@ class RuleParser():
                              " named cycles")
         steps = self.cycle_evaluate(cycle, genome_name, annotations)
         return ((sum(steps) / len(steps)) * 100) >= percent_val
-
 
     def name_func(self, node:str, genome_name:str, annotations:set):
         successor = list(self.G.successors(node))
@@ -473,8 +470,8 @@ class RuleParser():
     def find_positve_leaves(self, adj):
         all_leaf_node = {n for n in nx.descendants(self.G, adj)
                          if self.G.nodes[n]['type'] in LEAF_NODES}
-        nots = {i for n in nx.descendants(self.G, adj) 
-               if self.G.nodes[n]['type'] == 'not' 
+        nots = {i for n in nx.descendants(self.G, adj)
+               if self.G.nodes[n]['type'] == 'not'
                for i in nx.descendants(self.G, n)
                if self.G.nodes[i]['type'] in LEAF_NODES}
         return all_leaf_node - nots
@@ -507,7 +504,7 @@ def get_annot_data_for_positive_genes(annotations, fasta_names, positive_leaves)
     anno_counts = (
         annotations.data.loc[fasta_names]
         .copy()
-        .apply(lambda x: {i for i in additiv_cols 
+        .apply(lambda x: {i for i in additiv_cols
                        if x[i.split(':')[-1]] > 0}, axis=1)
     )
     anno_data = pd.Series(
@@ -526,12 +523,12 @@ def get_positive_genes(rules, annotations, adjectives_dat):
           .set_index('value')
           .drop(index=False)
          )
-    positive_leaves = {i: rules.find_positve_leaves(i) 
+    positive_leaves = {i: rules.find_positve_leaves(i)
                        for i in adj_data['adjective'].unique()}
-    anno_data = get_annot_data_for_positive_genes(annotations, 
+    anno_data = get_annot_data_for_positive_genes(annotations,
                                       fasta_names = adj_data['fasta'].unique(),
                                       positive_leaves=positive_leaves)
-    
+
     gene_adj = pd.concat([
         (pd.DataFrame(
             anno_data.loc[fa]
