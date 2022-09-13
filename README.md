@@ -98,6 +98,6 @@ Note: You can filter out the table for any specific genes you want to pull out b
 DRAM.py strainer -f genes_strainer_out.fna -i strainer_output.tsv
 ```
 # Notes
- * You must annotate with DRAM.1.4 or newer using the **FeGelein** database, for iron annotations to work correctly. 
+ * You must annotate with DRAM.1.4 or newer using the **FeGenie** database, for iron annotations to work correctly. 
  * If you are in Wrighton lab using zenith you can access annotations in the scripts' environment, contact Rory Flynn if you have trouble accessing the scripts' environment. 
  * Tree based improvements are in the works. 
