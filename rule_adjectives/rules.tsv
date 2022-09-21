@@ -14,7 +14,7 @@ annamox	annamox	HydrazineDeydrogenase&HydrazineSynthase
 Nitrogen fixer	NitrogenFixer	Nitrogenase
 	Nitrogenase	EC1.18.6.1|EC1.18.6.2|K02591|K02586|K02588|K00531|K22897|K22896|K22898|K22899
 Phototroph	Phototroph	PhotosystemI|PhotosystemII
-	PhotosystemI	K02689|K02690|K026901|K02692|K02693|K02694|K08940|K08941|K08942|K08943
+	PhotosystemI	K02689|K02690|K02691|K02692|K02693|K02694|K08940|K08941|K08942|K08943
 	PhotosystemII	K02703|K02704|K02705|K02706|K02707|K02708|K08928|K08929
 	ETC60	percent60ComplexIA|percent60ComplexIB|percent60ComplexIC
 	ETC50	percent50ComplexIA|percent50ComplexIB|percent50ComplexIC
