@@ -1,12 +1,12 @@
 name	parent	child	notes
-methanogen	methanogen	mcr&notOtherAjMethanogen
+Methanogen	methanogen	mcr&notOtherMethanogen
 	mcr	K00399|K00400|K00401|K00402|K03421|K03422
 	notOtherAjMethanogen	not:OtherAjMethanogen
 	OtherAjMethanogen	sulfatereducer|Denitrifier|AerobicAmmoniaOxidizer|comammox|annamox|Phototroph|ETC60
 Aerobic Ammonia Oxidizer	AerobicAmmoniaOxidizer	AmmoniaMonooxygenase|AmmoniaMonooxygenase&HydroxylamineDehydrogenase
 	AmmoniaMonooxygenase	EC1.14.99.39|K10944|K10945|K10946
 	HydroxylamineDehydrogenase	EC1.7.2.6|K10535
-comammox	comammox	AmmoniaMonooxygenase&NitriteOxidoreductase&HydrazineDeydrogenase
+Comammox	comammox	AmmoniaMonooxygenase&NitriteOxidoreductase&HydrazineDeydrogenase
 	NitriteOxidoreductase	K00370|K00371
 	HydrazineDeydrogenase	EC1.7.2.8|K20935
 annamox	annamox	HydrazineDeydrogenase&HydrazineSynthase

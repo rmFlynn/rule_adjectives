@@ -1,5 +1,5 @@
 name	parent	child
-Funcs	funcs	not&[atleast|percent|hemeCountGT1]
+Funcs	funcs	[not|not]&[atleast|percent|hemeCountGT1]
 Ids	ids	ko|ec|fe|camper|sulfur
 	atleast	atleast:1:complex
 	not	not:ec
@@ -11,3 +11,4 @@ Ids	ids	ko|ec|fe|camper|sulfur
 	sulfur	s>sulfur1
 	hemeCountGT1	columnvalue:gt:1:heme_regulatory_motif_count
 	complex	K00001,K00002,K00003,K00004,K00005
+

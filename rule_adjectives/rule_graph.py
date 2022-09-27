@@ -147,7 +147,6 @@ class RuleParser():
         else:
             keep_adj = set(adjectives)
             if not keep_adj.issubset(adj_names):
-                breakpoint()
                 raise ValueError(
                     f"No such adjectives {keep_adj - adj_names}")
         self.root_nodes = set(
@@ -165,6 +164,10 @@ class RuleParser():
             print(f"Parsing: {logic}")
         if (line := self.bipart_dict.get(logic)) is not None:
             nodeid = logic
+            if nodeid in self.G.nodes:
+                if parent:
+                    self.G.add_edge(parent, nodeid)
+                return # if there are successors dont double dip
             self.G.add_node(nodeid,
                             display=nodeid,
                             type='name',
@@ -200,12 +203,14 @@ class RuleParser():
             return
         if re.match(r'^fe>[0-9A-z]+$', logic):
             nodeid = logic[3:]
-            self.G.add_node(nodeid, display=nodeid, type='fegenie', function=fegenie_func, genomes={})
+            self.G.add_node(nodeid, display=nodeid, type='fegenie',
+                            function=fegenie_func, genomes={})
             self.G.add_edge(parent, nodeid)
             return
         if re.match(r'^s>[0-9A-z]+$', logic):
             nodeid = logic[2:]
-            self.G.add_node(nodeid, display=nodeid, type='sulfur', function=sulfur_func, genomes={})
+            self.G.add_node(nodeid, display=nodeid, type='sulfur',
+                            function=sulfur_func, genomes={})
             self.G.add_edge(parent, nodeid)
             return
         if re.match(r'^PF\d+', logic):
@@ -230,7 +235,8 @@ class RuleParser():
                 self.parse(s, parent=nodeid)
             return
         if len(ors := parse_ors(logic))> 1:
-            nodeid = f"{parent}-or"
+            s_num = (len(list(self.G.successors(parent))))
+            nodeid = f"{parent}-or-{s_num}"
             self.G.add_node(nodeid, display="or", type='or',
                             function=None, genomes={})
             self.G.add_edge(parent, nodeid)
@@ -238,7 +244,8 @@ class RuleParser():
                 self.parse(i, parent=nodeid)
             return
         if len(ands := parse_ands(logic))> 1:
-            nodeid = f"{parent}-and"
+            s_num = (len(list(self.G.successors(parent))))
+            nodeid = f"{parent}-and-{s_num}"
             self.G.add_node(nodeid, display="and", type='and',
                             function=None, genomes={})
             self.G.add_edge(parent, nodeid)
@@ -259,11 +266,11 @@ class RuleParser():
         self.G.add_edge(parent, f"error = {logic}")
 
 
-    def add_to_dot(self, node):
+    def _add_to_dot(self, node):
         for i in self.G.successors(node):
             self.dot.edge(node, i)
             if self.G[node].get('type') != 'steps' or True:
-                self.add_to_dot(i)
+                self._add_to_dot(i)
 
     def plot_rule(self, output_folder, adjectives:list=None,
                   show_steps=False):
@@ -272,7 +279,7 @@ class RuleParser():
         if adjectives is None:
             adjectives = self.root_nodes
         for i in adjectives:
-            self.add_to_dot(i)
+            self._add_to_dot(i)
         self.dot.render(os.path.join(output_folder, "All"), view=False)
 
     def add_to_dot_genome(self, node, genome, parent=None):
@@ -308,29 +315,30 @@ class RuleParser():
         self.add_to_dot_genome(adj, genome)
         self.dot.render(os.path.join(output_folder, genome, adj), view=False)
 
+
     def plot_cause(self, output_folder, adjectives=None,
                                 genomes=None,  show_steps=False):
         match (adjectives, genomes):
             case ((), ()):
-                for adj in self.root_nodes:
-                    for genome in self.annot.ids_by_fasta.index:
-                        self.plot_adj_genome(output_folder, adj, genome,
-                                             show_steps)
+                for adj in adjectives:
+                     for genome in genomes:
+                         self.plot_adj_genome(output_folder, adj, genome,
+                                              show_steps)
             case (_, ()):
-                for adj in adjectives:
-                    for genome in self.annot.ids_by_fasta.index:
-                        self.plot_adj_genome(output_folder, adj, genome,
-                                             show_steps)
-            case ((), _):
                 for adj in self.root_nodes:
                      for genome in genomes:
                          self.plot_adj_genome(output_folder, adj, genome,
                                               show_steps)
-            case (_, _):
+            case ((), _):
                 for adj in adjectives:
-                     for genome in genomes:
-                         self.plot_adj_genome(output_folder, adj, genome,
-                                              show_steps)
+                    for genome in self.annot.ids_by_fasta.index:
+                        self.plot_adj_genome(output_folder, adj, genome,
+                                             show_steps)
+            case (_, _):
+                for adj in self.root_nodes:
+                    for genome in self.annot.ids_by_fasta.index:
+                        self.plot_adj_genome(output_folder, adj, genome,
+                                             show_steps)
             case _:
                 raise ValueError("There was an error in ploting the genomes.")
 
@@ -362,8 +370,8 @@ class RuleParser():
 
     def name_func(self, node:str, genome_name:str, annotations:set):
         successor = list(self.G.successors(node))
-        if len(successor) > 1:
-            raise ValueError("A name can have only one child")
+        if (s_num := len(successor)) > 1:
+            raise ValueError(f"A name can have only one child, but {node} has {s_num}")
         return self.check_node(successor[0], genome_name, annotations)
 
 
@@ -446,22 +454,6 @@ class RuleParser():
                         return True
             case  'atleast':
                 return self.atleastfunk(node, genome_name, annotations)
-            # case  'inGenomeCount':
-            # #TODO Fix
-            #     successor = list(self.G.successors(node))
-            #     if len(successor) > 1:
-            #         raise ValueError("A inGenomeCount can have only one child,"
-            #                          " this is a programing error")
-            #     successor = successor[0]
-            #     if self.annot.ids_by_row is None:
-            #         self.annot.set_annotation_ids_by_row()
-            #     count = sum(self.annot.ids_by_row.apply(
-            #         lambda x: self.check_node(successor,
-            #                                   x.name,
-            #                                   x.annotations
-            #                                   ),
-            #         axis=1))
-            #     return int(self.G.nodes[node]['args']) <= count
             case  'error':
                  raise TypeError(f"Something failed to parse! What is {node}")
             case _:
@@ -475,22 +467,6 @@ class RuleParser():
                for i in nx.descendants(self.G, n)
                if self.G.nodes[i]['type'] in LEAF_NODES}
         return all_leaf_node - nots
-    # # TODO make this a match
-    # def check_positive_genes(self, node:str, genome_name:str, annotations:set):
-    #     #TODO method
-    #     positive_genes = []
-    #     match (self.G.nodes[node]['type'], self.G.nodes[node]['genomes'].get(genome_name)):
-    #         case (_, False):
-    #             return []
-    #         case 'not', _:
-    #         case _, True:
-    #         case _, :
-    #     if value is not None:
-    #         return value
-    #     value = self.evaluate_node(node, genome_name, annotations)
-    #     self.G.nodes[node]['genomes'][genome_name] = value
-    #     return value
-
 
 
 def get_annot_data_for_positive_genes(annotations, fasta_names, positive_leaves):
@@ -544,27 +520,3 @@ def get_positive_genes(rules, annotations, adjectives_dat):
         lambda x: ','.join(x))
     return gene_adj
 
-
-""".
-import os
-import click
-from rule_adjectives.rule_graph import RuleParser
-from rule_adjectives.annotations import Annotations, get_ids_from_annotation
-import pytest
-import pandas as pd
-import numpy
-
-TEST_RULES_FILE = "tests/input_data/small_rules.tsv"
-TEST_ANNOTATIONS_FILE = "tests/input_data/test_annotations.tsv"
-
-from rule_adjectives.rule_graph import RuleParser
-from rule_adjectives.annotations import Annotations, get_ids_from_annotation
-
-rules = RuleParser(TEST_RULES_FILE, verbose=False)
-annotations = Annotations(TEST_ANNOTATIONS_FILE)
-adjectives_dat = rules.check_genomes(annotations)
-get_positive_genes(rules, annotations, adjectives_dat)
-
-import os
-os.system('rule_adjectives /home/projects-wrighton-2/GROWdb/Yojoa_Hall/All_Med_High_bins/DRAM_per_bin/dRep_DRAM/merged_572_DRAM_annotations/annotations.tsv test.tsv')
-"""
