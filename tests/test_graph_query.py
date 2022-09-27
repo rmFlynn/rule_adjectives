@@ -15,6 +15,7 @@ import networkx as nx
 
 TEST_RULES_FILE = "tests/input_data/small_rules.tsv"
 TEST_ANNOTATIONS_FILE = "tests/input_data/test_annotations.tsv"
+TEST_NO_S_FE_ANNOTATIONS_FILE = "tests/input_data/test_annotations_no_s_no_f.tsv"
 
 
 def test_find_positve_leaves():
@@ -56,6 +57,16 @@ def test_rules():
     # rules.plot_rule("tests/output_data/plot_rules")
     # rules.plot_cause("./tests/output_data/plot_cause")
     assert len(list(rules.G.successors('funcs-and-0'))) == 2
+
+
+def test_key_remover():
+    rules = RuleParser(TEST_RULES_FILE, verbose=False)
+    annotations = Annotations(TEST_NO_S_FE_ANNOTATIONS_FILE)
+    adjectives_dat = rules.check_genomes(annotations)
+    assert 'Ids' not in adjectives_dat.columns
+    assert 'Funcs' in adjectives_dat.columns
+
+
 
 
 

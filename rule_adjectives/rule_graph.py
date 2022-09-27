@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import networkx as nx
 import graphviz
-from rule_adjectives.annotations import Annotations
+from rule_adjectives.annotations import Annotations, SULFUR_ID, FEGENIE_ID, FUNCTION_DICT
 
 LEAF_NODES = ['ko', 'camper', 'fegenie', 'sulfur', 'PF', 'ec', 'columnvalue']
 
@@ -391,13 +391,27 @@ class RuleParser():
         value = self.evaluate_node(node, genome_name, annotations)
         self.G.nodes[node]['genomes'][genome_name] = value
         return value
+    
+    def sufficient_info(self, node:str) -> bool:
+        """Check if we have sufficient_info for all the adjectivs"""
+        missing = [i for i in FUNCTION_DICT if i not in self.annot.data.columns]
+        functions = {i:j for i,j in FUNCTION_DICT.items() if i in self.annot.data.columns}
+        if SULFUR_ID in missing:
+            for i in nx.descendants(self.G, node):
+                if self.G.nodes[i]['type'] == 'sulfur':
+                    return False
+        if FEGENIE_ID in missing:
+            for i in nx.descendants(self.G, node):
+                if self.G.nodes[i]['type'] == 'fegenie':
+                    return False
+        return True
 
     def check_genomes(self, annot:Annotations):
         # TODO make names and flags
         self.annot = annot
         output = annot.ids_by_fasta.apply(
             lambda x: {node:self.check_node(node, x.name, x.annotations)
-                       for node in self.root_nodes},
+                       for node in self.root_nodes if self.sufficient_info(node)},
             axis=1,
             result_type='expand')
         output.columns = self.data.loc[output.columns, 'name'].values

@@ -8,18 +8,19 @@ from collections import Counter
 from itertools import chain
 # import dask.dataframe as dd
 
+
+SULFUR_ID = 'sulfur_id'
+FEGENIE_ID = 'fegenie_id'
 FUNCTION_DICT = {
     'camper_id': lambda x: [x],
-    'fegenie_id': lambda x: [x],
-    'sulfur_id': lambda x: [x],
+    FEGENIE_ID: lambda x: [x],
+    SULFUR_ID: lambda x: [x],
     'kegg_genes_id': lambda x: [x],
     'ko_id': lambda x: [j for j in x.split(',')],
     'kegg_id': lambda x: [j for j in x.split(',')],
     'kegg_hit': lambda x: [i[1:-1] for i in
                            re.findall(r'\[EC:\d*.\d*.\d*.\d*\]', x)],
     'peptidase_family': lambda x: [j for j in x.split(';')],
-    'cazy_id': lambda x: [i.split('_')[0] for i in x.split('; ')],
-    'cazy_ids': lambda x: [i.split('_')[0] for i in x.split('; ')],
     'cazy_hits': lambda x: [f"{i[1:3]}:{i[4:-1]}" for i in
                             re.findall(r'\(EC [\d+\.]+[\d-]\)', x)],
     'cazy_subfam_ec': lambda x: [f"EC:{i}" for i in
@@ -28,10 +29,9 @@ FUNCTION_DICT = {
                             for j in re.findall(r'\[PF\d\d\d\d\d.\d*\]', x)]
 }
 
-
 def get_ids_from_annotations_by_row(data):
-    functions = {i:j for i,j in FUNCTION_DICT.items() if i in data.columns}
     missing = [i for i in FUNCTION_DICT if i not in data.columns]
+    functions = {i:j for i,j in FUNCTION_DICT.items() if i in data.columns}
     print("Note: the following id fields "
           f"were not in the annotations file and are not being used: {missing},"
           f" but these are {list(functions.keys())}")
@@ -71,10 +71,3 @@ class Annotations():
         annot_ids = get_ids_from_annotations_by_row(self.data)
         annot_ids = pd.DataFrame(annot_ids, columns=['annotations'])
         self.ids_by_row = annot_ids
-""".git/
-import os
-os.system('rule_adjectives /home/projects-wrighton-2/GROWdb/USAfocus_FinalBins110121/all_bins/dRep_v2.6.2/dereplicated_genomes/merged_annotations_drep_bins/add_fe_and_s4/annotations.tsv adjectives_jul_31_22.tsv --strainer_tsv strainer_adjectives_jul_31_22.tsv')
-os.system('rule_adjectives /home/projects-wrighton-2/GROWdb/USAfocus_FinalBins110121/all_bins/dRep_v2.6.2/dereplicated_genomes/merged_annotations_drep_bins/add_fe_and_s/annotations.tsv /home/projects-wrighton-2/GROWdb/USAfocus_FinalBins110121/all_bins/dRep_v2.6.2/dereplicated_genomes/merged_annotations_drep_bins/adjectives_jul_31_22.tsv --strainer_tsv /home/projects-wrighton-2/GROWdb/USAfocus_FinalBins110121/all_bins/dRep_v2.6.2/dereplicated_genomes/merged_annotations_drep_bins/adjectives_strainer_jul_31_22.tsv')
-os.system('rule_adjectives /home/projects-wrighton-2/GROWdb/USAfocus_FinalBins110121/all_bins/dRep_v2.6.2/dereplicated_genomes/merged_annotations_drep_bins/add_fe_and_s_jul_31_22/annotations.tsv /home/projects-wrighton-2/GROWdb/USAfocus_FinalBins110121/all_bins/dRep_v2.6.2/dereplicated_genomes/merged_annotations_drep_bins/adjectives_jul_31_22.tsv --debug_ids_by_fasta_to_tsv /home/projects-wrighton-2/GROWdb/USAfocus_FinalBins110121/all_bins/dRep_v2.6.2/dereplicated_genomes/merged_annotations_drep_bins/debug_ids_by_fasta.tsv')
-Note: the fallowing id fields were not in the annotations file and are not being used: ['camper_id', 'kegg_genes_id', 'ko_id', 'cazy_id', 'cazy_subfam_ec'], but these are ['fegenie_id', 'sulfur_id', 'kegg_id', 'kegg_hit', 'peptidase_fam ily', 'cazy_hits', 'pfam_hits']
-"""
