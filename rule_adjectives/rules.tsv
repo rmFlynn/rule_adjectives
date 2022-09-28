@@ -1,7 +1,7 @@
 name	parent	child	notes
 Methanogen	methanogen	mcr&notOtherMethanogen
 	mcr	K00399|K00400|K00401|K00402|K03421|K03422
-	notOtherAjMethanogen	not:OtherAjMethanogen
+	notOtherMethanogen	not:OtherAjMethanogen
 	OtherAjMethanogen	sulfatereducer|Denitrifier|AerobicAmmoniaOxidizer|comammox|annamox|Phototroph|ETC60
 Aerobic Ammonia Oxidizer	AerobicAmmoniaOxidizer	AmmoniaMonooxygenase|AmmoniaMonooxygenase&HydroxylamineDehydrogenase
 	AmmoniaMonooxygenase	EC1.14.99.39|K10944|K10945|K10946
