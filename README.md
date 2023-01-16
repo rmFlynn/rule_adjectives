@@ -25,6 +25,14 @@ pip3 install -e ./ # yes you need the -e for now
 
 This is a temporary method of installation while the program is in beta, but a better method will be created after that.
 
+# Notes
+ * You must annotate with DRAM.1.4 or newer using the **FeGenie** database, for iron annotations to work correctly. If you don't iclued this database Iron annotations will not be made. 
+ * Also! You must annotate with DRAM.1.4 or newer using the **Sulfer** database, for sulfer annotations to work correctly. If you don't iclued this database sulfer annotations will not be made. 
+ * If you are in Wrighton lab using zenith you can access annotations in the scripts' environment, contact Rory Flynn if you have trouble accessing the scripts' environment. 
+ * If you are in the wrighton lab you can use the dram2 beta to add these genes. See the air tabe for instructions on how to use this script.
+ * Tree based improvements are in the works. 
+
+
 ## Use
 
 Currently you can annotate genomes and print out cause plots.
@@ -97,7 +105,5 @@ Note: You can filter out the table for any specific genes you want to pull out b
 ```
 DRAM.py strainer -f genes_strainer_out.fna -i strainer_output.tsv
 ```
-# Notes
- * You must annotate with DRAM.1.4 or newer using the **FeGenie** database, for iron annotations to work correctly. 
- * If you are in Wrighton lab using zenith you can access annotations in the scripts' environment, contact Rory Flynn if you have trouble accessing the scripts' environment. 
- * Tree based improvements are in the works. 
+
+If you want to update the rules with out udateting the adjectives you can download them with this comand. THIS IS FOR ADVAINCED USERS ONLY. Using the wrong rules will probably break your results.
