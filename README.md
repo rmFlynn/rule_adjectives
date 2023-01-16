@@ -107,3 +107,7 @@ DRAM.py strainer -f genes_strainer_out.fna -i strainer_output.tsv
 ```
 
 If you want to update the rules with out udateting the adjectives you can download them with this comand. THIS IS FOR ADVAINCED USERS ONLY. Using the wrong rules will probably break your results.
+
+```
+wget https://raw.githubusercontent.com/rmFlynn/rule_adjectives/main/dram2/rule_adjectives/rules.tsv
+```
